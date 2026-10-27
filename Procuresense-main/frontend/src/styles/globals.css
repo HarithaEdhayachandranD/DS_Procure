@@ -1,0 +1,199 @@
+/* ─── Google Fonts ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design Tokens ─────────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    --primary: 214 82% 54%;   /* #2563EB */
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 215 84% 47%;
+    --primary-light: 210 100% 96%;
+
+    --brand-secondary: 174 93% 24%; /* #0F766E */
+    --secondary: 174 93% 24%; /* #0F766E */
+    --secondary-foreground: 0 0% 100%;
+
+    --background: 0 0% 100%;
+    --foreground: 214 16% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 214 16% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 214 16% 18%;
+
+    --muted: 210 35% 96%;
+    --muted-foreground: 214 18% 52%;
+
+    --border: 214 71% 91%;
+    --input: 214 71% 91%;
+    --ring: 214 89% 59%;
+
+    --destructive: 354 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --radius: 16px;
+    --sidebar-width: 260px;
+    --navbar-height: 72px;
+  }
+}
+
+/* ─── Base Styles ────────────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border box-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  h1 { @apply text-5xl font-bold tracking-tight text-foreground; }
+  h2 { @apply text-4xl font-semibold tracking-tight text-foreground; }
+  h3 { @apply text-3xl font-semibold tracking-tight text-foreground; }
+  h4 { @apply text-2xl font-semibold text-foreground; }
+  h5 { @apply text-xl font-medium text-foreground; }
+  h6 { @apply text-lg font-medium text-foreground; }
+
+  p  { @apply text-base text-muted-foreground leading-relaxed; }
+
+  a  { @apply text-primary hover:text-primary-hover transition-colors duration-150; }
+
+  ::selection {
+    background-color: hsl(var(--primary-light));
+    color: hsl(var(--brand-secondary));
+  }
+}
+
+/* ─── Component Layer ────────────────────────────────────────────────────────── */
+@layer components {
+
+  /* Page wrapper */
+  .page-wrapper {
+    @apply min-h-screen bg-background;
+  }
+
+  /* Section heading */
+  .section-title {
+    @apply text-2xl font-semibold text-foreground tracking-tight;
+  }
+  .section-subtitle {
+    @apply text-sm text-muted-foreground mt-1;
+  }
+
+  /* Divider */
+  .divider {
+    @apply border-t border-border my-6;
+  }
+
+  /* Focus ring */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+  }
+
+  /* Shimmer skeleton base */
+  .skeleton {
+    @apply bg-muted rounded-lg overflow-hidden relative;
+  }
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,0.6) 50%,
+      transparent 100%
+    );
+    background-size: 400px 100%;
+    animation: shimmer 1.6s infinite linear;
+  }
+
+  /* Stat card number */
+  .stat-value {
+    @apply text-4xl font-bold text-foreground tracking-tight;
+  }
+  .stat-label {
+    @apply text-sm font-medium text-muted-foreground;
+  }
+
+  /* Table styles */
+  .ps-table {
+    @apply w-full text-sm;
+  }
+  .ps-table thead tr {
+    @apply border-b border-border;
+  }
+  .ps-table thead th {
+    @apply px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider whitespace-nowrap;
+  }
+  .ps-table tbody tr {
+    @apply border-b border-border last:border-0 hover:bg-muted/40 transition-colors duration-100;
+  }
+  .ps-table tbody td {
+    @apply px-4 py-3.5 text-sm text-foreground;
+  }
+
+  /* Sidebar nav item */
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground
+           hover:bg-accent hover:text-accent-foreground transition-all duration-150 cursor-pointer select-none;
+  }
+  .nav-item.active {
+    @apply bg-primary/10 text-primary font-semibold;
+  }
+  .nav-item .nav-icon {
+    @apply w-4 h-4 shrink-0;
+  }
+}
+
+/* ─── Utility Layer ──────────────────────────────────────────────────────────── */
+@layer utilities {
+
+  /* Scrollbar */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar       { width: 5px; height: 5px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--border));
+    border-radius: 99px;
+  }
+
+  /* Text truncation */
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* No scrollbar */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Transition */
+  .transition-base { @apply transition-all duration-200 ease-in-out; }
+
+  /* Brand text */
+  .text-brand { color: #2563eb; }
+  .text-brand-dark { color: #0f766e; }
+  .bg-brand { background-color: #2563eb; }
+  .bg-brand-dark { background-color: #0f766e; }
+  .border-brand { border-color: #2563eb; }
+}

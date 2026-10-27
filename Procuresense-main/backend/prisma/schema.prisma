@@ -1,0 +1,492 @@
+// Prisma Schema — ProcureSense AI
+// Database: PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  PROCUREMENT_MANAGER
+  ANALYST
+  VIEWER
+}
+
+enum SupplierStatus {
+  ACTIVE
+  INACTIVE
+  UNDER_REVIEW
+  BLACKLISTED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ProcurementStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ContractStatus {
+  DRAFT
+  ACTIVE
+  EXPIRING_SOON
+  EXPIRED
+  TERMINATED
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CANCELLED
+}
+
+enum DeliveryStatus {
+  SCHEDULED
+  IN_TRANSIT
+  DELIVERED
+  PARTIAL
+  LATE
+  FAILED
+}
+
+enum RecommendationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ReportStatus {
+  GENERATING
+  READY
+  FAILED
+}
+
+enum ReportFormat {
+  PDF
+  XLSX
+  CSV
+  JSON
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model Organization {
+  id          String   @id @default(uuid())
+  name        String
+  domain      String   @unique
+  logoUrl     String?
+  industry    String?
+  country     String?
+  timezone    String   @default("UTC")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users              User[]
+  suppliers          Supplier[]
+  procurements       Procurement[]
+  contracts          Contract[]
+  purchaseOrders     PurchaseOrder[]
+  deliveries         Delivery[]
+  qualityMetrics     QualityMetric[]
+  procurementCosts   ProcurementCost[]
+  riskPredictions    RiskPrediction[]
+  recommendations    Recommendation[]
+  notifications      Notification[]
+  reports            Report[]
+  roles              Role[]
+
+  @@map("organizations")
+}
+
+model Role {
+  id             String   @id @default(uuid())
+  organizationId String?
+  name           String   @unique
+  description    String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  users        User[]
+
+  @@index([organizationId])
+  @@map("roles")
+}
+
+model User {
+  id             String       @id @default(uuid())
+  organizationId String
+  email          String       @unique
+  passwordHash   String
+  firstName      String
+  lastName       String
+  role           UserRole     @default(VIEWER)
+  roleId         String?
+  roleRecord     Role?        @relation(fields: [roleId], references: [id])
+  avatarUrl      String?
+  isActive       Boolean      @default(true)
+  lastLoginAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization     Organization      @relation(fields: [organizationId], references: [id])
+  procurements     Procurement[]
+  purchaseOrders   PurchaseOrder[]
+  auditLogs        AuditLog[]
+  notifications    Notification[]
+  reports          Report[]
+
+  @@index([organizationId])
+  @@index([email])
+  @@map("users")
+}
+
+model Supplier {
+  id                  String         @id @default(uuid())
+  organizationId      String
+  name                String
+  code                String         @unique
+  email               String?
+  phone               String?
+  website             String?
+  country             String?
+  city                String?
+  industry            String?
+  status              SupplierStatus @default(ACTIVE)
+  riskLevel           RiskLevel      @default(LOW)
+  riskScore           Float          @default(0)
+  performanceScore    Float          @default(0)
+  onTimeDeliveryRate  Float          @default(0)
+  qualityScore        Float          @default(0)
+  responseTime        Float          @default(0)
+  totalSpend          Float          @default(0)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  organization      Organization       @relation(fields: [organizationId], references: [id])
+  procurements      Procurement[]
+  contracts         Contract[]
+  evaluations       SupplierEvaluation[]
+  purchaseOrders    PurchaseOrder[]
+  deliveries        Delivery[]
+  qualityMetrics    QualityMetric[]
+  procurementCosts  ProcurementCost[]
+  riskPredictions   RiskPrediction[]
+  recommendations   Recommendation[]
+  notifications     Notification[]
+  reports           Report[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([riskLevel])
+  @@map("suppliers")
+}
+
+model SupplierEvaluation {
+  id            String   @id @default(uuid())
+  supplierId    String
+  evaluatedAt   DateTime @default(now())
+  qualityScore  Float
+  deliveryScore Float
+  priceScore    Float
+  serviceScore  Float
+  overallScore  Float
+  notes         String?
+  aiInsights    Json?
+
+  supplier Supplier @relation(fields: [supplierId], references: [id])
+
+  @@index([supplierId])
+  @@map("supplier_evaluations")
+}
+
+model Procurement {
+  id                String            @id @default(uuid())
+  organizationId    String
+  supplierId        String?
+  createdById       String
+  title             String
+  description       String?
+  category          String?
+  status            ProcurementStatus @default(DRAFT)
+  estimatedValue    Float?
+  actualValue       Float?
+  currency          String            @default("USD")
+  requiredBy        DateTime?
+  completedAt       DateTime?
+  aiRecommendation  Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  supplier     Supplier?   @relation(fields: [supplierId], references: [id])
+  createdBy    User        @relation(fields: [createdById], references: [id])
+  lineItems    ProcurementLineItem[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@map("procurements")
+}
+
+model ProcurementLineItem {
+  id            String   @id @default(uuid())
+  procurementId String
+  description   String
+  quantity      Float
+  unitPrice     Float
+  totalPrice    Float
+  unit          String?
+
+  procurement Procurement @relation(fields: [procurementId], references: [id])
+
+  @@index([procurementId])
+  @@map("procurement_line_items")
+}
+
+model Contract {
+  id             String         @id @default(uuid())
+  organizationId String
+  supplierId     String
+  title          String
+  contractNumber String         @unique
+  status         ContractStatus @default(DRAFT)
+  value          Float
+  currency       String         @default("USD")
+  startDate      DateTime
+  endDate        DateTime
+  autoRenew      Boolean        @default(false)
+  terms          String?
+  documentUrl    String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  supplier     Supplier     @relation(fields: [supplierId], references: [id])
+
+  @@index([organizationId])
+  @@index([supplierId])
+  @@map("contracts")
+}
+
+model PurchaseOrder {
+  id               String              @id @default(uuid())
+  organizationId   String
+  supplierId       String
+  createdById      String
+  poNumber         String              @unique
+  title            String
+  description      String?
+  status           PurchaseOrderStatus @default(DRAFT)
+  orderDate        DateTime            @default(now())
+  expectedDelivery DateTime?
+  totalAmount      Float               @default(0)
+  currency         String              @default("USD")
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  supplier     Supplier     @relation(fields: [supplierId], references: [id])
+  createdBy    User         @relation(fields: [createdById], references: [id])
+  deliveries   Delivery[]
+  qualityMetrics QualityMetric[]
+  procurementCosts ProcurementCost[]
+
+  @@index([organizationId])
+  @@index([supplierId])
+  @@index([status])
+  @@index([poNumber])
+  @@map("purchase_orders")
+}
+
+model Delivery {
+  id                String         @id @default(uuid())
+  organizationId    String
+  purchaseOrderId   String
+  supplierId        String
+  deliveryNumber    String         @unique
+  status            DeliveryStatus @default(SCHEDULED)
+  shippedAt         DateTime?
+  deliveredAt       DateTime?
+  quantityReceived  Float          @default(0)
+  quantityExpected  Float          @default(0)
+  condition         String?
+  notes             String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  organization  Organization @relation(fields: [organizationId], references: [id])
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  supplier      Supplier      @relation(fields: [supplierId], references: [id])
+
+  @@index([organizationId])
+  @@index([purchaseOrderId])
+  @@index([supplierId])
+  @@index([status])
+  @@map("deliveries")
+}
+
+model QualityMetric {
+  id              String   @id @default(uuid())
+  organizationId  String
+  supplierId      String
+  purchaseOrderId String?
+  metricType      String
+  score           Float
+  measuredAt      DateTime @default(now())
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  organization  Organization @relation(fields: [organizationId], references: [id])
+  supplier      Supplier     @relation(fields: [supplierId], references: [id])
+  purchaseOrder PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
+
+  @@index([organizationId])
+  @@index([supplierId])
+  @@index([metricType])
+  @@map("quality_metrics")
+}
+
+model ProcurementCost {
+  id              String   @id @default(uuid())
+  organizationId  String
+  supplierId      String
+  purchaseOrderId String?
+  costType        String
+  amount          Float
+  currency        String   @default("USD")
+  incurredAt      DateTime @default(now())
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  organization  Organization @relation(fields: [organizationId], references: [id])
+  supplier      Supplier     @relation(fields: [supplierId], references: [id])
+  purchaseOrder PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
+
+  @@index([organizationId])
+  @@index([supplierId])
+  @@map("procurement_costs")
+}
+
+model RiskPrediction {
+  id                String   @id @default(uuid())
+  organizationId    String
+  supplierId        String
+  modelVersion      String
+  predictedRiskLevel RiskLevel @default(LOW)
+  score             Float
+  explanation       String?
+  predictedAt       DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  supplier     Supplier     @relation(fields: [supplierId], references: [id])
+
+  @@index([organizationId])
+  @@index([supplierId])
+  @@index([predictedRiskLevel])
+  @@map("risk_predictions")
+}
+
+model Recommendation {
+  id               String                  @id @default(uuid())
+  organizationId   String
+  supplierId       String?
+  title            String
+  message          String
+  priority         RecommendationPriority @default(MEDIUM)
+  status           String                  @default("OPEN")
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  supplier     Supplier?    @relation(fields: [supplierId], references: [id])
+
+  @@index([organizationId])
+  @@index([priority])
+  @@map("recommendations")
+}
+
+model Notification {
+  id             String   @id @default(uuid())
+  organizationId String
+  userId         String
+  supplierId     String?
+  title          String
+  message        String
+  type           String   @default("INFO")
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+  supplier     Supplier?    @relation(fields: [supplierId], references: [id])
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+model Report {
+  id             String      @id @default(uuid())
+  organizationId String
+  createdById    String
+  supplierId     String?
+  title          String
+  type           String
+  format         ReportFormat @default(PDF)
+  status         ReportStatus @default(GENERATING)
+  fileUrl        String?
+  generatedAt    DateTime?
+  createdAt      DateTime    @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  createdBy    User         @relation(fields: [createdById], references: [id])
+  supplier     Supplier?    @relation(fields: [supplierId], references: [id])
+
+  @@index([organizationId])
+  @@index([createdById])
+  @@index([status])
+  @@map("reports")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  entity    String
+  entityId  String
+  oldValues Json?
+  newValues Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entity])
+  @@map("audit_logs")
+}

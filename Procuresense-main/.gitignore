@@ -1,0 +1,83 @@
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ─── Build outputs ────────────────────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# ─── Environment variables ────────────────────────────────────────────────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# ─── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.Python
+venv/
+.venv/
+env/
+ENV/
+*.egg-info/
+dist/
+.eggs/
+pip-log.txt
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ─── ML Models & Data ─────────────────────────────────────────────────────────
+ml-service/trained_models/*.pkl
+ml-service/trained_models/*.joblib
+ml-service/trained_models/*.h5
+ml-service/trained_models/*.pt
+dataset/raw/*.csv
+dataset/raw/*.xlsx
+dataset/processed/*.csv
+dataset/processed/*.parquet
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ─── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ─── IDE ──────────────────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# ─── Prisma ───────────────────────────────────────────────────────────────────
+backend/prisma/migrations/
+
+# ─── Uploads ──────────────────────────────────────────────────────────────────
+backend/uploads/
+
+# ─── Testing ──────────────────────────────────────────────────────────────────
+coverage/
+.nyc_output/

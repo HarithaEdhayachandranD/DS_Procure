@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 32" fill="none" role="img" aria-label="ProcureSense AI Wordmark">
+
+  <!-- "Procure" -->
+  <text
+    x="0" y="22"
+    font-family="Inter, system-ui, -apple-system, sans-serif"
+    font-size="20" font-weight="700" letter-spacing="-0.5"
+    fill="#0f172a"
+  >Procure</text>
+
+  <!-- "Sense" in teal -->
+  <text
+    x="83" y="22"
+    font-family="Inter, system-ui, -apple-system, sans-serif"
+    font-size="20" font-weight="700" letter-spacing="-0.5"
+    fill="#17bfb7"
+  >Sense</text>
+
+  <!-- "AI" pill badge -->
+  <rect x="143" y="6" width="28" height="18" rx="5" fill="#047a74"/>
+  <text
+    x="157" y="18.5"
+    font-family="Inter, system-ui, -apple-system, sans-serif"
+    font-size="10" font-weight="800" letter-spacing="0.8"
+    fill="#ffffff" text-anchor="middle"
+  >AI</text>
+
+</svg>

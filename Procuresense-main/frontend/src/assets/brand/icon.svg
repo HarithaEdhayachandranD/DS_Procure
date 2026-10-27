@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-label="ProcureSense AI Icon">
+
+  <!-- Background square with rounded corners -->
+  <rect width="48" height="48" rx="12" fill="#17bfb7"/>
+
+  <!-- Hexagon frame — supply chain / procurement -->
+  <path
+    d="M24 8 L35.2 14.5 L35.2 27.5 L24 34 L12.8 27.5 L12.8 14.5 Z"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="2"
+    stroke-linejoin="round"
+    opacity="0.35"
+  />
+
+  <!-- Inner hexagon — decision core -->
+  <path
+    d="M24 15 L29.2 18 L29.2 24 L24 27 L18.8 24 L18.8 18 Z"
+    fill="#ffffff"
+    opacity="0.15"
+  />
+
+  <!-- Central AI node -->
+  <circle cx="24" cy="21" r="4" fill="#ffffff"/>
+
+  <!-- Data spokes — analytics / intelligence -->
+  <line x1="24" y1="17"  x2="24" y2="10"  stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+  <line x1="24" y1="25"  x2="24" y2="32"  stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+  <line x1="20.5" y1="19" x2="14.5" y2="15.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+  <line x1="27.5" y1="19" x2="33.5" y2="15.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+  <line x1="20.5" y1="23" x2="14.5" y2="26.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+  <line x1="27.5" y1="23" x2="33.5" y2="26.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Spoke endpoint dots -->
+  <circle cx="24"  cy="10"  r="2" fill="#ffffff" opacity="0.9"/>
+  <circle cx="24"  cy="32"  r="2" fill="#ffffff" opacity="0.9"/>
+  <circle cx="14.5" cy="15.5" r="2" fill="#ffffff" opacity="0.9"/>
+  <circle cx="33.5" cy="15.5" r="2" fill="#ffffff" opacity="0.9"/>
+  <circle cx="14.5" cy="26.5" r="2" fill="#ffffff" opacity="0.9"/>
+  <circle cx="33.5" cy="26.5" r="2" fill="#ffffff" opacity="0.9"/>
+
+  <!-- AI accent — top-right corner spark -->
+  <circle cx="38" cy="10" r="4" fill="#047a74"/>
+  <text
+    x="38" y="13"
+    font-family="Inter, system-ui, sans-serif"
+    font-size="5" font-weight="800"
+    fill="#ffffff" text-anchor="middle"
+  >AI</text>
+
+</svg>
